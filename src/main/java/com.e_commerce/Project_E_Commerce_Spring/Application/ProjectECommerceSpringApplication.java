@@ -9,7 +9,7 @@ public class ProjectECommerceSpringApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectECommerceSpringApplication.class, args);
 
-	
+
 	}
 
 }
