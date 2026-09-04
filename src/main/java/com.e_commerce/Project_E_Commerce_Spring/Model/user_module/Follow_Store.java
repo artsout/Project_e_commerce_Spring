@@ -23,8 +23,13 @@ public class Follow_Store {
 
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_follow_store_id_client")
     private Client id_client;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_follow_store_id_store")
     private Store id_store;
+
+
+
 }

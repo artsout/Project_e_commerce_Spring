@@ -1,13 +1,17 @@
 package com.e_commerce.Project_E_Commerce_Spring.Model.user_module;
 
+import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Order_Item;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Order_Enum.Order_Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.sql.results.graph.collection.internal.CollectionAssembler;
 import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "order",indexes = {
@@ -48,4 +52,16 @@ public class Order {
     @Column(nullable = false)
     private Point orderCurrentPosition;
 
+
+    @OneToMany(mappedBy = "id_order", cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    private Set<Order_Item> OrderItemOrders = new HashSet<>();
+
+
+
+    public  void addOrderItem(Order_Item orderItem){
+        OrderItemOrders.add(orderItem);
+    }
+    public  void removeOrderItem(Order_Item orderItem){
+        OrderItemOrders.remove(orderItem);
+    }
 }

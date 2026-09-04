@@ -52,13 +52,16 @@ public class Notification {
     private Notification_Class notification_class;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_notification_id_client")
     private Client id_client;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_notification_id_product")
     private Product id_product;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_notification_id_store")
     private Store id_store;
 
 }

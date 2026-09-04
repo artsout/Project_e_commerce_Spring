@@ -9,6 +9,8 @@ import org.hibernate.annotations.DialectOverride;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_rating",indexes = {
@@ -37,13 +39,30 @@ public class Product_Rating {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_product_rating_id_child")
     private Product_Rating child_id;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_product_rating_id_client")
     private Client id_client;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_product_rating_id_product")
     private Product id_product;
 
 
+    @OneToMany(mappedBy = "parent_id",orphanRemoval = true)
+    private Set<Product_Rating> childProductRatings =new HashSet<>();
+
+
+
+
+
+
+    public void addChildProductRating(Product_Rating product_rating){
+        childProductRatings.add(product_rating);
+    }
+    public void removeChildProductRating(Product_Rating product_rating){
+        childProductRatings.remove(product_rating);
+    }
 }
