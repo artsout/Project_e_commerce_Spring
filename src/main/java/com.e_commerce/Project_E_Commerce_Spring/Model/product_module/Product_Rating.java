@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -24,7 +25,7 @@ public class Product_Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long parent_id;
+    private Long parent_id;
 
     @NotBlank
     @Column(nullable = false,length = 500)
@@ -52,12 +53,108 @@ public class Product_Rating {
 
 
     @OneToMany(mappedBy = "parent_id",orphanRemoval = true)
-    private Set<Product_Rating> childProductRatings =new HashSet<>();
+    private Set<Product_Rating> childProductRatings= new HashSet<>();
 
+    public Product_Rating(Long parent_id, String comment, LocalDateTime comment_date, Integer starRating, Product_Rating child_id, Client id_client, Product id_product, Set<Product_Rating> childProductRatings) {
+        this.parent_id = parent_id;
+        this.comment = comment;
+        this.comment_date = comment_date;
+        this.starRating = starRating;
+        this.child_id = child_id;
+        this.id_client = id_client;
+        this.id_product = id_product;
+        this.childProductRatings = childProductRatings;
+    }
 
+    public Long getParent_id() {
+        return parent_id;
+    }
 
+    public void setParent_id(Long parent_id) {
+        this.parent_id = parent_id;
+    }
 
+    public String getComment() {
+        return comment;
+    }
 
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public LocalDateTime getComment_date() {
+        return comment_date;
+    }
+
+    public void setComment_date(LocalDateTime comment_date) {
+        this.comment_date = comment_date;
+    }
+
+    public Integer getStarRating() {
+        return starRating;
+    }
+
+    public void setStarRating(Integer starRating) {
+        this.starRating = starRating;
+    }
+
+    public Product_Rating getChild_id() {
+        return child_id;
+    }
+
+    public void setChild_id(Product_Rating child_id) {
+        this.child_id = child_id;
+    }
+
+    public Client getId_client() {
+        return id_client;
+    }
+
+    public void setId_client(Client id_client) {
+        this.id_client = id_client;
+    }
+
+    public Product getId_product() {
+        return id_product;
+    }
+
+    public void setId_product(Product id_product) {
+        this.id_product = id_product;
+    }
+
+    public Set<Product_Rating> getChildProductRatings() {
+        return childProductRatings;
+    }
+
+    public void setChildProductRatings(Set<Product_Rating> childProductRatings) {
+        this.childProductRatings = childProductRatings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Product_Rating that = (Product_Rating) o;
+        return parent_id == that.parent_id && Objects.equals(comment, that.comment) && Objects.equals(comment_date, that.comment_date) && Objects.equals(starRating, that.starRating) && Objects.equals(child_id, that.child_id) && Objects.equals(id_client, that.id_client) && Objects.equals(id_product, that.id_product) && Objects.equals(childProductRatings, that.childProductRatings);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parent_id, comment, comment_date, starRating, child_id, id_client, id_product, childProductRatings);
+    }
+
+    @Override
+    public String toString() {
+        return "Product_Rating{" +
+                "parent_id=" + parent_id +
+                ", comment='" + comment + '\'' +
+                ", comment_date=" + comment_date +
+                ", starRating=" + starRating +
+                ", child_id=" + child_id +
+                ", id_client=" + id_client +
+                ", id_product=" + id_product +
+                ", childProductRatings=" + childProductRatings +
+                '}';
+    }
 
     public void addChildProductRating(Product_Rating product_rating){
         childProductRatings.add(product_rating);
