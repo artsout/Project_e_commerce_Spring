@@ -2,7 +2,6 @@ package com.e_commerce.Project_E_Commerce_Spring.Model.product_module;
 
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Order;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.hibernate.annotations.ColumnDefault;
@@ -31,17 +30,17 @@ public class Order_Item {
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_order_item_id_order")
-    private Order id_order;
+    private Order order;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_order_item_id_product")
-    private Product id_product;
+    private Product product;
 
-    public Order_Item(UUID id, Integer orderItemQuantity, Order id_order, Product id_product) {
+    public Order_Item(UUID id, Integer orderItemQuantity, Order order, Product product) {
         this.id = id;
         this.orderItemQuantity = orderItemQuantity;
-        this.id_order = id_order;
-        this.id_product = id_product;
+        this.order = order;
+        this.product = product;
     }
 
     public UUID getId() {
@@ -60,32 +59,32 @@ public class Order_Item {
         this.orderItemQuantity = orderItemQuantity;
     }
 
-    public Order getId_order() {
-        return id_order;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setId_order(Order id_order) {
-        this.id_order = id_order;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public Product getId_product() {
-        return id_product;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setId_product(Product id_product) {
-        this.id_product = id_product;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Order_Item orderItem = (Order_Item) o;
-        return Objects.equals(id, orderItem.id) && Objects.equals(orderItemQuantity, orderItem.orderItemQuantity) && Objects.equals(id_order, orderItem.id_order) && Objects.equals(id_product, orderItem.id_product);
+        return Objects.equals(id, orderItem.id) && Objects.equals(orderItemQuantity, orderItem.orderItemQuantity) && Objects.equals(order, orderItem.order) && Objects.equals(product, orderItem.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderItemQuantity, id_order, id_product);
+        return Objects.hash(id, orderItemQuantity, order, product);
     }
 
     @Override
@@ -93,8 +92,8 @@ public class Order_Item {
         return "Order_Item{" +
                 "id=" + id +
                 ", orderItemQuantity=" + orderItemQuantity +
-                ", id_order=" + id_order +
-                ", id_product=" + id_product +
+                ", id_order=" + order +
+                ", id_product=" + product +
                 '}';
     }
 }

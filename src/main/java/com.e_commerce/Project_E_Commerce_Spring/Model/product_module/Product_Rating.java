@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DialectOverride;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -41,28 +40,28 @@ public class Product_Rating {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_product_rating_id_child")
-    private Product_Rating child_id;
+    private Product_Rating productRating;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_product_rating_id_client")
-    private Client id_client;
+    private Client client;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_product_rating_id_product")
-    private Product id_product;
+    private Product product;
 
 
     @OneToMany(mappedBy = "parent_id",orphanRemoval = true)
     private Set<Product_Rating> childProductRatings= new HashSet<>();
 
-    public Product_Rating(Long parent_id, String comment, LocalDateTime comment_date, Integer starRating, Product_Rating child_id, Client id_client, Product id_product, Set<Product_Rating> childProductRatings) {
+    public Product_Rating(Long parent_id, String comment, LocalDateTime comment_date, Integer starRating, Product_Rating productRating, Client client, Product product, Set<Product_Rating> childProductRatings) {
         this.parent_id = parent_id;
         this.comment = comment;
         this.comment_date = comment_date;
         this.starRating = starRating;
-        this.child_id = child_id;
-        this.id_client = id_client;
-        this.id_product = id_product;
+        this.productRating = productRating;
+        this.client = client;
+        this.product = product;
         this.childProductRatings = childProductRatings;
     }
 
@@ -98,28 +97,28 @@ public class Product_Rating {
         this.starRating = starRating;
     }
 
-    public Product_Rating getChild_id() {
-        return child_id;
+    public Product_Rating getProductRating() {
+        return productRating;
     }
 
-    public void setChild_id(Product_Rating child_id) {
-        this.child_id = child_id;
+    public void setProductRating(Product_Rating productRating) {
+        this.productRating = productRating;
     }
 
-    public Client getId_client() {
-        return id_client;
+    public Client getClient() {
+        return client;
     }
 
-    public void setId_client(Client id_client) {
-        this.id_client = id_client;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public Product getId_product() {
-        return id_product;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setId_product(Product id_product) {
-        this.id_product = id_product;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Set<Product_Rating> getChildProductRatings() {
@@ -134,12 +133,12 @@ public class Product_Rating {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product_Rating that = (Product_Rating) o;
-        return parent_id == that.parent_id && Objects.equals(comment, that.comment) && Objects.equals(comment_date, that.comment_date) && Objects.equals(starRating, that.starRating) && Objects.equals(child_id, that.child_id) && Objects.equals(id_client, that.id_client) && Objects.equals(id_product, that.id_product) && Objects.equals(childProductRatings, that.childProductRatings);
+        return parent_id == that.parent_id && Objects.equals(comment, that.comment) && Objects.equals(comment_date, that.comment_date) && Objects.equals(starRating, that.starRating) && Objects.equals(productRating, that.productRating) && Objects.equals(client, that.client) && Objects.equals(product, that.product) && Objects.equals(childProductRatings, that.childProductRatings);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parent_id, comment, comment_date, starRating, child_id, id_client, id_product, childProductRatings);
+        return Objects.hash(parent_id, comment, comment_date, starRating, productRating, client, product, childProductRatings);
     }
 
     @Override
@@ -149,9 +148,9 @@ public class Product_Rating {
                 ", comment='" + comment + '\'' +
                 ", comment_date=" + comment_date +
                 ", starRating=" + starRating +
-                ", child_id=" + child_id +
-                ", id_client=" + id_client +
-                ", id_product=" + id_product +
+                ", child_id=" + productRating +
+                ", id_client=" + client +
+                ", id_product=" + product +
                 ", childProductRatings=" + childProductRatings +
                 '}';
     }

@@ -14,17 +14,15 @@ import java.util.UUID;
 public interface Product_RatingRepository extends JpaRepository<Product_Rating , Long> {
 
 
-    List<Product_Rating> findByParent_idId(Long parentId);
-
 
     List<Product_Rating> findByProductRating(Integer productRating);
 
     List<Product_Rating>  findByProductRatingDateBetween(LocalDateTime min,LocalDateTime max);
 
-    List<Product_Rating> findByProductRatingIdAllChild(Long productRatingId);
+    List<Product_Rating> findByProductRatingId(Long productRatingId);
 
-    List<Product_Rating> findByUserIdClient(UUID userId);
+    List<Product_Rating> findByClientId(UUID userId);
 
-    List<Product_Rating> findByIdProduct(Long productId);
-    
+    List<Product_Rating> findByProductId(Long productId);
+
 }

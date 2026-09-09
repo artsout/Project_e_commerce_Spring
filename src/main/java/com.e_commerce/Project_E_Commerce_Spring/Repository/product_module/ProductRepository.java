@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<Product,Long> {
 
 
-    List<Product> findByProductPrice(BigDecimal productPrice);
+    List<Product> findByPrice(BigDecimal productPrice);
 
     List<Product> findByProductRatingCount(Integer productRatingCount);
 

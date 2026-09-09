@@ -2,14 +2,11 @@ package com.e_commerce.Project_E_Commerce_Spring.Model.product_module;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jdk.jfr.Category;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -48,11 +45,11 @@ public class Product {
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_notification_id_store")
-    private Store id_store;
+    private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_notification_id_category")
-    private Category productCategory;
+    private Category category;
 
     @OneToMany(mappedBy = "id_product",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Set<Order_Item> orderItemsProduct =new HashSet<>();
@@ -61,14 +58,14 @@ public class Product {
     @OneToMany(mappedBy = "id_product",cascade =CascadeType.ALL,orphanRemoval = true)
     private  Set<Product_Rating> productRatings = new HashSet<>();
 
-    public Product(long id, BigDecimal price, LocalDateTime productCreationDate, Integer productRatingCount, Integer productRating, Store id_store, Category productCategory, Set<Order_Item> orderItemsProduct, Set<Product_Rating> productRatings) {
+    public Product(long id, BigDecimal price, LocalDateTime productCreationDate, Integer productRatingCount, Integer productRating, Store store, Category category, Set<Order_Item> orderItemsProduct, Set<Product_Rating> productRatings) {
         this.id = id;
         this.price = price;
         this.productCreationDate = productCreationDate;
         this.productRatingCount = productRatingCount;
         this.productRating = productRating;
-        this.id_store = id_store;
-        this.productCategory = productCategory;
+        this.store = store;
+        this.category = category;
         this.orderItemsProduct = orderItemsProduct;
         this.productRatings = productRatings;
     }
@@ -113,20 +110,20 @@ public class Product {
         this.productRating = productRating;
     }
 
-    public Store getId_store() {
-        return id_store;
+    public Store getStore() {
+        return store;
     }
 
-    public void setId_store(Store id_store) {
-        this.id_store = id_store;
+    public void setStore(Store store) {
+        this.store = store;
     }
 
-    public Category getProductCategory() {
-        return productCategory;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setProductCategory(Category productCategory) {
-        this.productCategory = productCategory;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public Set<Order_Item> getOrderItemsProduct() {
@@ -149,12 +146,12 @@ public class Product {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id && Objects.equals(price, product.price) && Objects.equals(productCreationDate, product.productCreationDate) && Objects.equals(productRatingCount, product.productRatingCount) && Objects.equals(productRating, product.productRating) && Objects.equals(id_store, product.id_store) && Objects.equals(productCategory, product.productCategory) && Objects.equals(orderItemsProduct, product.orderItemsProduct) && Objects.equals(productRatings, product.productRatings);
+        return id == product.id && Objects.equals(price, product.price) && Objects.equals(productCreationDate, product.productCreationDate) && Objects.equals(productRatingCount, product.productRatingCount) && Objects.equals(productRating, product.productRating) && Objects.equals(store, product.store) && Objects.equals(category, product.category) && Objects.equals(orderItemsProduct, product.orderItemsProduct) && Objects.equals(productRatings, product.productRatings);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, price, productCreationDate, productRatingCount, productRating, id_store, productCategory, orderItemsProduct, productRatings);
+        return Objects.hash(id, price, productCreationDate, productRatingCount, productRating, store, category, orderItemsProduct, productRatings);
     }
 
     @Override
@@ -165,8 +162,8 @@ public class Product {
                 ", productCreationDate=" + productCreationDate +
                 ", productRatingCount=" + productRatingCount +
                 ", productRating=" + productRating +
-                ", id_store=" + id_store +
-                ", productCategory=" + productCategory +
+                ", id_store=" + store +
+                ", productCategory=" + category +
                 ", orderItemsProduct=" + orderItemsProduct +
                 ", productRatings=" + productRatings +
                 '}';

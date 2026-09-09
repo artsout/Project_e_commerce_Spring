@@ -8,8 +8,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jdk.jfr.BooleanFlag;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -54,28 +52,28 @@ public class Notification {
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_notification_id_client")
-    private Client id_client;
+    private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_notification_id_product")
-    private Product id_product;
+    private Product product;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_notification_id_store")
-    private Store id_store;
+    private Store store;
 
 
-    public Notification(Long id, String notificationName, String notificationDescription, Boolean notificationAlreadyRead, LocalDateTime notificationDate, Notification_Class notification_class, Client id_client, Product id_product, Store id_store) {
+    public Notification(Long id, String notificationName, String notificationDescription, Boolean notificationAlreadyRead, LocalDateTime notificationDate, Notification_Class notification_class, Client client, Product product, Store store) {
         this.id = id;
         this.notificationName = notificationName;
         this.notificationDescription = notificationDescription;
         this.notificationAlreadyRead = notificationAlreadyRead;
         this.notificationDate = notificationDate;
         this.notification_class = notification_class;
-        this.id_client = id_client;
-        this.id_product = id_product;
-        this.id_store = id_store;
+        this.client = client;
+        this.product = product;
+        this.store = store;
     }
 
     public Long getId() {
@@ -126,40 +124,40 @@ public class Notification {
         this.notification_class = notification_class;
     }
 
-    public Client getId_client() {
-        return id_client;
+    public Client getClient() {
+        return client;
     }
 
-    public void setId_client(Client id_client) {
-        this.id_client = id_client;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public Product getId_product() {
-        return id_product;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setId_product(Product id_product) {
-        this.id_product = id_product;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
-    public Store getId_store() {
-        return id_store;
+    public Store getStore() {
+        return store;
     }
 
-    public void setId_store(Store id_store) {
-        this.id_store = id_store;
+    public void setStore(Store store) {
+        this.store = store;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Notification that = (Notification) o;
-        return id == that.id && Objects.equals(notificationName, that.notificationName) && Objects.equals(notificationDescription, that.notificationDescription) && Objects.equals(notificationAlreadyRead, that.notificationAlreadyRead) && Objects.equals(notificationDate, that.notificationDate) && notification_class == that.notification_class && Objects.equals(id_client, that.id_client) && Objects.equals(id_product, that.id_product) && Objects.equals(id_store, that.id_store);
+        return id == that.id && Objects.equals(notificationName, that.notificationName) && Objects.equals(notificationDescription, that.notificationDescription) && Objects.equals(notificationAlreadyRead, that.notificationAlreadyRead) && Objects.equals(notificationDate, that.notificationDate) && notification_class == that.notification_class && Objects.equals(client, that.client) && Objects.equals(product, that.product) && Objects.equals(store, that.store);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, notificationName, notificationDescription, notificationAlreadyRead, notificationDate, notification_class, id_client, id_product, id_store);
+        return Objects.hash(id, notificationName, notificationDescription, notificationAlreadyRead, notificationDate, notification_class, client, product, store);
     }
 
     @Override
@@ -171,9 +169,9 @@ public class Notification {
                 ", notificationAlreadyRead=" + notificationAlreadyRead +
                 ", notificationDate=" + notificationDate +
                 ", notification_class=" + notification_class +
-                ", id_client=" + id_client +
-                ", id_product=" + id_product +
-                ", id_store=" + id_store +
+                ", id_client=" + client +
+                ", id_product=" + product +
+                ", id_store=" + store +
                 '}';
     }
 }

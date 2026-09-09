@@ -4,9 +4,7 @@ import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Order_Item;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Order_Enum.Order_Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.sql.results.graph.collection.internal.CollectionAssembler;
 import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
@@ -33,7 +31,7 @@ public class Order {
 
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    private Client id_client;
+    private Client client;
 
 
     @Column(nullable = false, updatable = false)
@@ -58,10 +56,10 @@ public class Order {
     private Set<Order_Item> OrderItemOrders = new HashSet<>();
 
 
-    public Order(Long id, Order_Status order_status, Client id_client, LocalDateTime orderExchangePeriod, LocalDateTime orderDate, LocalDateTime orderArrivalDate, Point orderCurrentPosition, Set<Order_Item> orderItemOrders) {
+    public Order(Long id, Order_Status order_status, Client client, LocalDateTime orderExchangePeriod, LocalDateTime orderDate, LocalDateTime orderArrivalDate, Point orderCurrentPosition, Set<Order_Item> orderItemOrders) {
         this.id = id;
         this.order_status = order_status;
-        this.id_client = id_client;
+        this.client = client;
         this.orderExchangePeriod = orderExchangePeriod;
         this.orderDate = orderDate;
         this.orderArrivalDate = orderArrivalDate;
@@ -85,12 +83,12 @@ public class Order {
         this.order_status = order_status;
     }
 
-    public Client getId_client() {
-        return id_client;
+    public Client getClient() {
+        return client;
     }
 
-    public void setId_client(Client id_client) {
-        this.id_client = id_client;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public LocalDateTime getOrderExchangePeriod() {
@@ -137,12 +135,12 @@ public class Order {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id && order_status == order.order_status && Objects.equals(id_client, order.id_client) && Objects.equals(orderExchangePeriod, order.orderExchangePeriod) && Objects.equals(orderDate, order.orderDate) && Objects.equals(orderArrivalDate, order.orderArrivalDate) && Objects.equals(orderCurrentPosition, order.orderCurrentPosition) && Objects.equals(OrderItemOrders, order.OrderItemOrders);
+        return id == order.id && order_status == order.order_status && Objects.equals(client, order.client) && Objects.equals(orderExchangePeriod, order.orderExchangePeriod) && Objects.equals(orderDate, order.orderDate) && Objects.equals(orderArrivalDate, order.orderArrivalDate) && Objects.equals(orderCurrentPosition, order.orderCurrentPosition) && Objects.equals(OrderItemOrders, order.OrderItemOrders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, order_status, id_client, orderExchangePeriod, orderDate, orderArrivalDate, orderCurrentPosition, OrderItemOrders);
+        return Objects.hash(id, order_status, client, orderExchangePeriod, orderDate, orderArrivalDate, orderCurrentPosition, OrderItemOrders);
     }
 
     @Override
@@ -150,7 +148,7 @@ public class Order {
         return "Order{" +
                 "id=" + id +
                 ", order_status=" + order_status +
-                ", id_client=" + id_client +
+                ", id_client=" + client +
                 ", orderExchangePeriod=" + orderExchangePeriod +
                 ", orderDate=" + orderDate +
                 ", orderArrivalDate=" + orderArrivalDate +

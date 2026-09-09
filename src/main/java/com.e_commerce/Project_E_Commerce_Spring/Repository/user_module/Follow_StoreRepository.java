@@ -12,13 +12,13 @@ import java.util.UUID;
 @Repository
 public interface Follow_StoreRepository extends JpaRepository<Follow_Store,UUID> {
 
-    List<Follow_Store> findByIdClientIdAndFollowStoreDateBetween(UUID clientId, LocalDateTime min, LocalDateTime max);
+    List<Follow_Store> findByClientIdAndFollowStoreDateBetween(UUID clientId, LocalDateTime min, LocalDateTime max);
 
-    List<Follow_Store> findByIdStoreIdAndFollowStoreDateBetween(UUID storeId, LocalDateTime min, LocalDateTime max);
+    List<Follow_Store> findByStoreIdAndFollowStoreDateBetween(UUID storeId, LocalDateTime min, LocalDateTime max);
 
     @EntityGraph(attributePaths = {"id_client"})
-    List<Follow_Store> findByIdStoreId(UUID storeId);
+    List<Follow_Store> findByStoreId(UUID storeId);
 
     @EntityGraph(attributePaths = {"id_store"})
-    List<Follow_Store> findByIdClientId(UUID clientId);
+    List<Follow_Store> findByClientId(UUID clientId);
 }

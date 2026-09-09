@@ -25,8 +25,8 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
 
     @EntityGraph(attributePaths = {"id_pedido", "id_store"})
-    List<Notification> findByIdClientIdAndIdPedidoIsNotNull(UUID clientId);
-
+    List<Notification> findByClientIdAndNotificationReadFalse(UUID userId);
+    
     @EntityGraph(attributePaths = {"id_pedido", "id_store"})
-    List<Notification> findByIdClientIdAndIdPedidoIsNotNullAndNotificationReadFalse(UUID clientId);
+    List<Notification> findByClientIdAndPedidoIdIsNotNullAndNotificationReadFalse(UUID clientId);
 }

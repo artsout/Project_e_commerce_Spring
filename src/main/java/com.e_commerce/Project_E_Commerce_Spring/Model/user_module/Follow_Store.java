@@ -25,18 +25,18 @@ public class Follow_Store {
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_follow_store_id_client")
-    private Client id_client;
+    private Client client;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_follow_store_id_store")
-    private Store id_store;
+    private Store store;
 
 
-    public Follow_Store(Long id, LocalDateTime followStoreDate, Client id_client, Store id_store) {
+    public Follow_Store(Long id, LocalDateTime followStoreDate, Client client, Store store) {
         this.id = id;
         this.followStoreDate = followStoreDate;
-        this.id_client = id_client;
-        this.id_store = id_store;
+        this.client = client;
+        this.store = store;
     }
 
     public Long getId() {
@@ -55,32 +55,32 @@ public class Follow_Store {
         this.followStoreDate = followStoreDate;
     }
 
-    public Client getId_client() {
-        return id_client;
+    public Client getClient() {
+        return client;
     }
 
-    public void setId_client(Client id_client) {
-        this.id_client = id_client;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public Store getId_store() {
-        return id_store;
+    public Store getStore() {
+        return store;
     }
 
-    public void setId_store(Store id_store) {
-        this.id_store = id_store;
+    public void setStore(Store store) {
+        this.store = store;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Follow_Store that = (Follow_Store) o;
-        return id == that.id && Objects.equals(followStoreDate, that.followStoreDate) && Objects.equals(id_client, that.id_client) && Objects.equals(id_store, that.id_store);
+        return id == that.id && Objects.equals(followStoreDate, that.followStoreDate) && Objects.equals(client, that.client) && Objects.equals(store, that.store);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, followStoreDate, id_client, id_store);
+        return Objects.hash(id, followStoreDate, client, store);
     }
 
     @Override
@@ -88,8 +88,8 @@ public class Follow_Store {
         return "Follow_Store{" +
                 "id=" + id +
                 ", followStoreDate=" + followStoreDate +
-                ", id_client=" + id_client +
-                ", id_store=" + id_store +
+                ", id_client=" + client +
+                ", id_store=" + store +
                 '}';
     }
 }
