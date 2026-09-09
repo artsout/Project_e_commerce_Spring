@@ -24,11 +24,11 @@ public class Follow_Store {
 
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_follow_store_id_client")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_follow_store_id_store")
+    @JoinColumn(name = "store_id")
     private Store store;
 
 

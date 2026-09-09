@@ -2,10 +2,11 @@ package com.e_commerce.Project_E_Commerce_Spring.Model.user_module;
 
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Order_Item;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Order_Enum.Order_Status;
+import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.aux_Order_Current_Position.CurrentPosition;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.geo.Point;
+
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -27,10 +28,11 @@ public class Order {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Order_Status order_status;
+    private Order_Status orderStatus;
 
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
     private Client client;
 
 
@@ -48,17 +50,18 @@ public class Order {
     private LocalDateTime orderArrivalDate;
 
     @NotNull
-    @Column(nullable = false)
-    private Point orderCurrentPosition;
+    @Embedded
+    @Column(nullable = false , columnDefinition = "POINT")
+   private CurrentPosition orderCurrentPosition;
 
 
-    @OneToMany(mappedBy = "id_order", cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Set<Order_Item> OrderItemOrders = new HashSet<>();
 
 
-    public Order(Long id, Order_Status order_status, Client client, LocalDateTime orderExchangePeriod, LocalDateTime orderDate, LocalDateTime orderArrivalDate, Point orderCurrentPosition, Set<Order_Item> orderItemOrders) {
+    public Order(Long id, Order_Status orderStatus, Client client, LocalDateTime orderExchangePeriod, LocalDateTime orderDate, LocalDateTime orderArrivalDate, CurrentPosition orderCurrentPosition, Set<Order_Item> orderItemOrders) {
         this.id = id;
-        this.order_status = order_status;
+        this.orderStatus = orderStatus;
         this.client = client;
         this.orderExchangePeriod = orderExchangePeriod;
         this.orderDate = orderDate;
@@ -75,12 +78,12 @@ public class Order {
         this.id = id;
     }
 
-    public Order_Status getOrder_status() {
-        return order_status;
+    public Order_Status getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setOrder_status(Order_Status order_status) {
-        this.order_status = order_status;
+    public void setOrderStatus(Order_Status orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public Client getClient() {
@@ -115,11 +118,11 @@ public class Order {
         this.orderArrivalDate = orderArrivalDate;
     }
 
-    public Point getOrderCurrentPosition() {
+    public CurrentPosition getOrderCurrentPosition() {
         return orderCurrentPosition;
     }
 
-    public void setOrderCurrentPosition(Point orderCurrentPosition) {
+    public void setOrderCurrentPosition(CurrentPosition orderCurrentPosition) {
         this.orderCurrentPosition = orderCurrentPosition;
     }
 
@@ -135,19 +138,19 @@ public class Order {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id && order_status == order.order_status && Objects.equals(client, order.client) && Objects.equals(orderExchangePeriod, order.orderExchangePeriod) && Objects.equals(orderDate, order.orderDate) && Objects.equals(orderArrivalDate, order.orderArrivalDate) && Objects.equals(orderCurrentPosition, order.orderCurrentPosition) && Objects.equals(OrderItemOrders, order.OrderItemOrders);
+        return id == order.id && orderStatus == order.orderStatus && Objects.equals(client, order.client) && Objects.equals(orderExchangePeriod, order.orderExchangePeriod) && Objects.equals(orderDate, order.orderDate) && Objects.equals(orderArrivalDate, order.orderArrivalDate) && Objects.equals(orderCurrentPosition, order.orderCurrentPosition) && Objects.equals(OrderItemOrders, order.OrderItemOrders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, order_status, client, orderExchangePeriod, orderDate, orderArrivalDate, orderCurrentPosition, OrderItemOrders);
+        return Objects.hash(id, orderStatus, client, orderExchangePeriod, orderDate, orderArrivalDate, orderCurrentPosition, OrderItemOrders);
     }
 
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", order_status=" + order_status +
+                ", order_status=" + orderStatus +
                 ", id_client=" + client +
                 ", orderExchangePeriod=" + orderExchangePeriod +
                 ", orderDate=" + orderDate +

@@ -25,7 +25,7 @@ public class Category {
     private String categoryName;
 
 
-    @OneToMany(mappedBy = "productCategory",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @OneToMany(mappedBy = "category",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Set<Product> products =new HashSet<>();
 
     public Category(Long id, String categoryName, Set<Product> products) {

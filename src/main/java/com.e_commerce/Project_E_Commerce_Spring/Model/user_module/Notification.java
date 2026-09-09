@@ -48,29 +48,29 @@ public class Notification {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 45)
-    private Notification_Class notification_class;
+    private Notification_Class notificationClass;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_notification_id_client")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_notification_id_product")
+    @JoinColumn(name = "product_id")
     private Product product;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_notification_id_store")
+    @JoinColumn(name = "store_id")
     private Store store;
 
 
-    public Notification(Long id, String notificationName, String notificationDescription, Boolean notificationAlreadyRead, LocalDateTime notificationDate, Notification_Class notification_class, Client client, Product product, Store store) {
+    public Notification(Long id, String notificationName, String notificationDescription, Boolean notificationAlreadyRead, LocalDateTime notificationDate, Notification_Class notificationClass, Client client, Product product, Store store) {
         this.id = id;
         this.notificationName = notificationName;
         this.notificationDescription = notificationDescription;
         this.notificationAlreadyRead = notificationAlreadyRead;
         this.notificationDate = notificationDate;
-        this.notification_class = notification_class;
+        this.notificationClass = notificationClass;
         this.client = client;
         this.product = product;
         this.store = store;
@@ -116,12 +116,12 @@ public class Notification {
         this.notificationDate = notificationDate;
     }
 
-    public Notification_Class getNotification_class() {
-        return notification_class;
+    public Notification_Class getNotificationClass() {
+        return notificationClass;
     }
 
-    public void setNotification_class(Notification_Class notification_class) {
-        this.notification_class = notification_class;
+    public void setNotificationClass(Notification_Class notificationClass) {
+        this.notificationClass = notificationClass;
     }
 
     public Client getClient() {
@@ -152,12 +152,12 @@ public class Notification {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Notification that = (Notification) o;
-        return id == that.id && Objects.equals(notificationName, that.notificationName) && Objects.equals(notificationDescription, that.notificationDescription) && Objects.equals(notificationAlreadyRead, that.notificationAlreadyRead) && Objects.equals(notificationDate, that.notificationDate) && notification_class == that.notification_class && Objects.equals(client, that.client) && Objects.equals(product, that.product) && Objects.equals(store, that.store);
+        return id == that.id && Objects.equals(notificationName, that.notificationName) && Objects.equals(notificationDescription, that.notificationDescription) && Objects.equals(notificationAlreadyRead, that.notificationAlreadyRead) && Objects.equals(notificationDate, that.notificationDate) && notificationClass == that.notificationClass && Objects.equals(client, that.client) && Objects.equals(product, that.product) && Objects.equals(store, that.store);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, notificationName, notificationDescription, notificationAlreadyRead, notificationDate, notification_class, client, product, store);
+        return Objects.hash(id, notificationName, notificationDescription, notificationAlreadyRead, notificationDate, notificationClass, client, product, store);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class Notification {
                 ", notificationDescription='" + notificationDescription + '\'' +
                 ", notificationAlreadyRead=" + notificationAlreadyRead +
                 ", notificationDate=" + notificationDate +
-                ", notification_class=" + notification_class +
+                ", notification_class=" + notificationClass +
                 ", id_client=" + client +
                 ", id_product=" + product +
                 ", id_store=" + store +

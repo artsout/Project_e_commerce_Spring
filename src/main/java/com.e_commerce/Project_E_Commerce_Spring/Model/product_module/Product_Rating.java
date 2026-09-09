@@ -31,7 +31,7 @@ public class Product_Rating {
     private String comment;
 
     @CreatedDate
-    private LocalDateTime comment_date;
+    private LocalDateTime commentDate;
 
     @NotNull
     @ColumnDefault("0")
@@ -39,27 +39,27 @@ public class Product_Rating {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_product_rating_id_child")
-    private Product_Rating productRating;
+    @JoinColumn(name = "product_rating_id_child")
+    private Product_Rating Idchild;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_product_rating_id_client")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_product_rating_id_product")
+    @JoinColumn(name = "product_id")
     private Product product;
 
 
     @OneToMany(mappedBy = "parent_id",orphanRemoval = true)
     private Set<Product_Rating> childProductRatings= new HashSet<>();
 
-    public Product_Rating(Long parent_id, String comment, LocalDateTime comment_date, Integer starRating, Product_Rating productRating, Client client, Product product, Set<Product_Rating> childProductRatings) {
+    public Product_Rating(Long parent_id, String comment, LocalDateTime commentDate, Integer starRating, Product_Rating Idchild, Client client, Product product, Set<Product_Rating> childProductRatings) {
         this.parent_id = parent_id;
         this.comment = comment;
-        this.comment_date = comment_date;
+        this.commentDate = commentDate;
         this.starRating = starRating;
-        this.productRating = productRating;
+        this.Idchild = Idchild;
         this.client = client;
         this.product = product;
         this.childProductRatings = childProductRatings;
@@ -81,12 +81,12 @@ public class Product_Rating {
         this.comment = comment;
     }
 
-    public LocalDateTime getComment_date() {
-        return comment_date;
+    public LocalDateTime getCommentDate() {
+        return commentDate;
     }
 
-    public void setComment_date(LocalDateTime comment_date) {
-        this.comment_date = comment_date;
+    public void setCommentDate(LocalDateTime commentDate) {
+        this.commentDate = commentDate;
     }
 
     public Integer getStarRating() {
@@ -97,12 +97,12 @@ public class Product_Rating {
         this.starRating = starRating;
     }
 
-    public Product_Rating getProductRating() {
-        return productRating;
+    public Product_Rating getIdchild() {
+        return Idchild;
     }
 
-    public void setProductRating(Product_Rating productRating) {
-        this.productRating = productRating;
+    public void setIdchild(Product_Rating idchild) {
+        this.Idchild = idchild;
     }
 
     public Client getClient() {
@@ -133,12 +133,12 @@ public class Product_Rating {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product_Rating that = (Product_Rating) o;
-        return parent_id == that.parent_id && Objects.equals(comment, that.comment) && Objects.equals(comment_date, that.comment_date) && Objects.equals(starRating, that.starRating) && Objects.equals(productRating, that.productRating) && Objects.equals(client, that.client) && Objects.equals(product, that.product) && Objects.equals(childProductRatings, that.childProductRatings);
+        return parent_id == that.parent_id && Objects.equals(comment, that.comment) && Objects.equals(commentDate, that.commentDate) && Objects.equals(starRating, that.starRating) && Objects.equals(Idchild, that.Idchild) && Objects.equals(client, that.client) && Objects.equals(product, that.product) && Objects.equals(childProductRatings, that.childProductRatings);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(parent_id, comment, comment_date, starRating, productRating, client, product, childProductRatings);
+        return Objects.hash(parent_id, comment, commentDate, starRating, Idchild, client, product, childProductRatings);
     }
 
     @Override
@@ -146,9 +146,9 @@ public class Product_Rating {
         return "Product_Rating{" +
                 "parent_id=" + parent_id +
                 ", comment='" + comment + '\'' +
-                ", comment_date=" + comment_date +
+                ", comment_date=" + commentDate +
                 ", starRating=" + starRating +
-                ", child_id=" + productRating +
+                ", child_id=" + Idchild +
                 ", id_client=" + client +
                 ", id_product=" + product +
                 ", childProductRatings=" + childProductRatings +

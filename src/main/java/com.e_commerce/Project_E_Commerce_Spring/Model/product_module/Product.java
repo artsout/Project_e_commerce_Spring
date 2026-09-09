@@ -44,18 +44,18 @@ public class Product {
     private Integer productRating;//produto nota
 
     @ManyToOne(optional = false,fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_notification_id_store")
+    @JoinColumn(name = "store_id")
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_notification_id_category")
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "id_product",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @OneToMany(mappedBy = "product",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Set<Order_Item> orderItemsProduct =new HashSet<>();
 
 
-    @OneToMany(mappedBy = "id_product",cascade =CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade =CascadeType.ALL,orphanRemoval = true)
     private  Set<Product_Rating> productRatings = new HashSet<>();
 
     public Product(long id, BigDecimal price, LocalDateTime productCreationDate, Integer productRatingCount, Integer productRating, Store store, Category category, Set<Order_Item> orderItemsProduct, Set<Product_Rating> productRatings) {

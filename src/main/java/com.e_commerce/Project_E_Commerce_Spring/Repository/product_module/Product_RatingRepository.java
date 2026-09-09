@@ -15,11 +15,10 @@ public interface Product_RatingRepository extends JpaRepository<Product_Rating ,
 
 
 
-    List<Product_Rating> findByProductRating(Integer productRating);
+    List<Product_Rating> findByStarRating(Integer starRating);
 
-    List<Product_Rating>  findByProductRatingDateBetween(LocalDateTime min,LocalDateTime max);
+    List<Product_Rating>  findByCommentDateBetween(LocalDateTime min,LocalDateTime max);
 
-    List<Product_Rating> findByProductRatingId(Long productRatingId);
 
     List<Product_Rating> findByClientId(UUID userId);
 

@@ -19,17 +19,14 @@ import java.util.UUID;
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
 
-    List<Client> findByClientName(String userName);
+    List<Client> findByClientName(String clientName);
+    List<Client> findByEmailClient(String emailClient);
+    List<Client> findByNumber(String number);
+    List<Client> findByClientAddress(Address clientAddress);
 
-    List<Client> findByEmail(String userEmail);
-
-    List<Client> findByNumber(String userNumber);
-
-    List<Client> findByAddress(Address userAddress);
-
-    @EntityGraph(attributePaths = {"id_client"})
+    @Query("SELECT s FROM Store s JOIN s.storeFollowed f WHERE f.store.id = :storeId")
     List<Client> findByFollowingStoreId(UUID storeId);
 
-    List<Client> findByClientFollowIdStoreId(UUID storeId);
-
+    @Query("SELECT c FROM Client c JOIN c.clientFollow f WHERE f.store.id = :storeId")
+    List<Client> findByFollowEDStoreId(@Param("storeId") UUID storeId);
 }

@@ -17,5 +17,5 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
 
     List<Store> findByEmail(String email);
 
-    List<Store> findByAddress(Address address);
+    List<Store> findByStoreAddress(Address address);
 }

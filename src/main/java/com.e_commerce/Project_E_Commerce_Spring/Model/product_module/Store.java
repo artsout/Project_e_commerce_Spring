@@ -43,11 +43,11 @@ public class Store {
     @Column(nullable = false)
     private Integer orderItemCount;
 
-    @OneToMany(mappedBy = "id_store",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "store",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Product> products = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "id_store")
+    @OneToMany(mappedBy = "store")
     private Set<Follow_Store> storeFollowed = new HashSet<>();
 
     public Store(UUID id, String email, String cnpj, Address storeAddress, Integer orderItemCount, Set<Product> products, Set<Follow_Store> storeFollowed) {

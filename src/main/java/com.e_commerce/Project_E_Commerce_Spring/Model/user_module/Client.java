@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "client",indexes = {
-        @Index(name = "idx_clent_creation_date",columnList = "client_creation_date"),
+        @Index(name = "idx_client_creation_date",columnList = "client_creation_date"),
         @Index(name = "idx_client_address",columnList = "client_address")
 
 
@@ -64,20 +64,20 @@ public class Client {
     @Embedded
     private Address clientAddress;
 
-    @OneToMany(mappedBy = "id_client",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Notification> notifications = new HashSet<>();
 
-    @OneToMany(mappedBy = "id_product",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Notification> productNotifications =new HashSet<>();
 
-    @OneToMany(mappedBy = "id_store",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Notification> storeNotification=new HashSet<>();
 
 
-    @OneToMany(mappedBy = "id_client",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Product_Rating> clientProductsRating =new HashSet<>();
 
-    @OneToMany(mappedBy = "id_client")
+    @OneToMany(mappedBy = "client")
     private Set<Follow_Store> clientFollow=new HashSet<>();
 
     public Client(UUID id, String clientName, String emailClient, LocalDateTime clientCreationDate, String password, String number, Integer clientPedidoCount, Integer clientNotificacaoCount, Address clientAddress, Set<Notification> notifications, Set<Notification> productNotifications, Set<Notification> storeNotification, Set<Product_Rating> clientProductsRating, Set<Follow_Store> clientFollow) {
