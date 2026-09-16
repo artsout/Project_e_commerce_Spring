@@ -1,0 +1,184 @@
+package com.e_commerce.Project_E_Commerce_Spring.Model.product_module;
+
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+@Entity
+@Table(name = "product",indexes = {
+    @Index(name = "idx_product_price",columnList = "price"),
+        @Index(name = "idx_product_id_category",columnList = "fk_product_id_category"),
+        @Index(name = "idx_product_creation_date",columnList = "product_creation_date"),
+        @Index(name = "idx_product_rating",columnList = "product_rating"),
+        @Index(name = "idx_product_id_store",columnList = "fk_product_id_store"),
+})
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Positive
+    @NotNull
+    @Column(nullable = false)
+    private BigDecimal price;
+
+
+    @CreatedDate
+    private LocalDateTime productCreationDate;
+
+    @NotNull
+    @Column(nullable = false)
+    private Integer productRatingCount;//quant de avaliaçoes
+
+    @NotNull
+    @Column(nullable = false)
+    private Integer productRating;//produto nota
+
+    @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @OneToMany(mappedBy = "product",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    private Set<Order_Item> orderItemsProduct =new HashSet<>();
+
+
+    @OneToMany(mappedBy = "product",cascade =CascadeType.ALL,orphanRemoval = true)
+    private  Set<Product_Rating> productRatings = new HashSet<>();
+
+    public Product(long id, BigDecimal price, LocalDateTime productCreationDate, Integer productRatingCount, Integer productRating, Store store, Category category, Set<Order_Item> orderItemsProduct, Set<Product_Rating> productRatings) {
+        this.id = id;
+        this.price = price;
+        this.productCreationDate = productCreationDate;
+        this.productRatingCount = productRatingCount;
+        this.productRating = productRating;
+        this.store = store;
+        this.category = category;
+        this.orderItemsProduct = orderItemsProduct;
+        this.productRatings = productRatings;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public LocalDateTime getProductCreationDate() {
+        return productCreationDate;
+    }
+
+    public void setProductCreationDate(LocalDateTime productCreationDate) {
+        this.productCreationDate = productCreationDate;
+    }
+
+    public Integer getProductRatingCount() {
+        return productRatingCount;
+    }
+
+    public void setProductRatingCount(Integer productRatingCount) {
+        this.productRatingCount = productRatingCount;
+    }
+
+    public Integer getProductRating() {
+        return productRating;
+    }
+
+    public void setProductRating(Integer productRating) {
+        this.productRating = productRating;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Set<Order_Item> getOrderItemsProduct() {
+        return orderItemsProduct;
+    }
+
+    public void setOrderItemsProduct(Set<Order_Item> orderItemsProduct) {
+        this.orderItemsProduct = orderItemsProduct;
+    }
+
+    public Set<Product_Rating> getProductRatings() {
+        return productRatings;
+    }
+
+    public void setProductRatings(Set<Product_Rating> productRatings) {
+        this.productRatings = productRatings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return id == product.id && Objects.equals(price, product.price) && Objects.equals(productCreationDate, product.productCreationDate) && Objects.equals(productRatingCount, product.productRatingCount) && Objects.equals(productRating, product.productRating) && Objects.equals(store, product.store) && Objects.equals(category, product.category) && Objects.equals(orderItemsProduct, product.orderItemsProduct) && Objects.equals(productRatings, product.productRatings);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, productCreationDate, productRatingCount, productRating, store, category, orderItemsProduct, productRatings);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", price=" + price +
+                ", productCreationDate=" + productCreationDate +
+                ", productRatingCount=" + productRatingCount +
+                ", productRating=" + productRating +
+                ", id_store=" + store +
+                ", productCategory=" + category +
+                ", orderItemsProduct=" + orderItemsProduct +
+                ", productRatings=" + productRatings +
+                '}';
+    }
+
+    public  void addOrderItem(Order_Item orderItem){
+        orderItemsProduct.add(orderItem);
+    }
+    public  void removeOrderItem(Order_Item orderItem){
+        orderItemsProduct.remove(orderItem);
+    }
+    public  void addProductProductsRating(Product_Rating product_rating){productRatings.add(product_rating);}
+    public  void removeProductProductsRating(Product_Rating product_rating){
+        productRatings.remove(product_rating);
+    }
+
+
+}
