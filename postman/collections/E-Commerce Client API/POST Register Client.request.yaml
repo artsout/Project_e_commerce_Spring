@@ -1,0 +1,61 @@
+$kind: http-request
+order: 1000
+method: POST
+url: http://localhost:8080/api/v1/client/register
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "clientName": "Jose Silva",
+      "emailClient": "jose_teste@email.com",
+      "password": "senhaSegura123",
+      "number": "+5511999991234",
+      "followsCount": 0,
+      "clientPedidoCount": 0,
+      "clientNotificacaoCount": 0,
+      "clientAddress": {
+        "rua": "Rua das Flores",
+        "cidade": "Sao Paulo",
+        "cep": "012345678"
+      }
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 400 Bad Request", function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test("Response body is valid JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      pm.test("[ERROR] HTTP status matches body.status", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.status).to.eql(400);
+      });
+
+      pm.test("[ERROR] Error category (body.error)", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.error).to.be.a('string');
+      });
+
+      pm.test("[ERROR] Server message (body.message)", function () {
+          var jsonData = pm.response.json();
+          // Note: The response body does not contain a 'message' field, 
+          // so this test might be failing if it expects one.
+          // Keeping it as requested to retain existing tests.
+          pm.expect(jsonData).to.have.property('message');
+      });
+
+      pm.test("[ERROR] Request path (body.path)", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.path).to.eql("/api/v1/store/register");
+      });
+
+      pm.test("[ERROR] Timestamp (body.timestamp)", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.timestamp).to.be.a('string');
+      });
