@@ -19,10 +19,13 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
 
     Store findByEmail(String email);
 
-    @Query("SELECT s FROM Store s WHERE " +
-            "(:rua IS NULL OR s.storeAddress.rua LIKE %:rua%) AND " +
-            "(:cidade IS NULL OR s.storeAddress.cidade LIKE %:cidade%) AND " +
-            "(:cep IS NULL OR s.storeAddress.cep = :cep)")
+
+    @Query(value = "SELECT s.* FROM Store s " +
+            "INNER JOIN StoreAddress a ON s.address_id = a.id " +
+            "WHERE (:rua IS NULL OR to_tsvector('portuguese', a.rua) @@ to_tsquery('portuguese', :rua)) " +
+            "AND (:cidade IS NULL OR to_tsvector('portuguese', a.cidade) @@ to_tsquery('portuguese', :cidade)) " +
+            "AND (:cep IS NULL OR a.cep = :cep)",
+            nativeQuery = true)
     List<Store> findByStoreAddress(
             @Param("rua") String rua,
             @Param("cidade") String cidade,

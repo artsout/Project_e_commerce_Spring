@@ -38,3 +38,9 @@ build/
 **/workspace.globals.yaml
 **/POST Register Client.request.yaml
 **/definition.yaml
+**/app.key
+**/app.pub
+target/
+postman/
+resources/
+.postman/

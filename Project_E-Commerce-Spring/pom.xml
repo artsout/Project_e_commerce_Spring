@@ -42,10 +42,23 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+        <!-- oauth2-client removed: this app is a resource server that issues its own JWTs,
+             oauth2-client auto-config conflicts with oauth2-resource-server and causes 404s -->
+
 		<!-- Validation -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+		<!--Argon2 -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.78.1</version>
 		</dependency>
 
 		<!-- MySQL Driver -->

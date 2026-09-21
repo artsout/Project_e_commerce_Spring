@@ -1,46 +1,33 @@
-package com.e_commerce.Project_E_Commerce_Spring.Dto.Client;
+package com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth;
 
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientResponse {
+public class ClientAuthRequestRegister {
 
-
-    private UUID id;
-
-
-    private LocalDateTime clientCreationDate;
-
-
-    private Integer clientNotificacaoCount;
-
-
-    private Integer clientPedidoCount;
-
-
-
+    @NotBlank
     private String clientName;
 
-
+    @Email
     private String emailClient;
 
+    @NotBlank
+    @Size(min = 8, max = 15, message = "Please, insert a valid password")
     private String password;
 
-
+    @NotBlank
     private String number;
 
+    @NotNull
     private Address clientAddress;
 }

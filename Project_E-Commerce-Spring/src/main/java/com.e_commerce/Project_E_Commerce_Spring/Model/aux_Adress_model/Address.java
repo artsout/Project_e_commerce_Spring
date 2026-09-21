@@ -1,6 +1,8 @@
 package com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,11 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+@Table(name = "store_address", indexes = {
+        @Index(name = "idx_fts_rua", columnList = "FULLTEXT rua"),
+        @Index(name = "idx_fts_cidade", columnList = "FULLTEXT cidade")
+})
 public class Address {
     @NotBlank
     private String rua;

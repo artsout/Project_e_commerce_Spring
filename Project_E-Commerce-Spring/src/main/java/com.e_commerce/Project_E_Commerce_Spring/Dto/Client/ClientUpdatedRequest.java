@@ -3,10 +3,7 @@ package com.e_commerce.Project_E_Commerce_Spring.Dto.Client;
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,18 +20,21 @@ import java.util.UUID;
 public class ClientUpdatedRequest {
 
 
+    @NotBlank
     private String clientName;
 
-
+    @Email
     private String emailClient;
 
-
+    @NotNull
     private LocalDateTime clientCreationDate;
 
+    @NotBlank
     private String password;
 
-
+    @NotBlank
     private String number;
 
+    @NotNull
     private Address clientAddress;
 }

@@ -1,14 +1,15 @@
 package com.e_commerce.Project_E_Commerce_Spring.Repository.user_module;
 
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
-import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Client;
+import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.ClientRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -36,4 +37,6 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
             @Param("cidade") String cidade,
             @Param("cep") String cep
     );
+
+    Optional<Client> findByRoles(ClientRole role);
 }

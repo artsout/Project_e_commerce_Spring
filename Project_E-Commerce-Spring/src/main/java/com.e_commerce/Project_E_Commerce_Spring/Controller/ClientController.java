@@ -1,41 +1,42 @@
 package com.e_commerce.Project_E_Commerce_Spring.Controller;
 
 
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.ClientAuthRequestRegister;
+
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.mapper.ClientAuthMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientMapper.ClientMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientUpdatedRequest;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationDto;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationMapper.NotificationMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.ProductRating.Mapper.ProductRatingMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.ProductRating.ProductRatingDto;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.StoreDto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_Dto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_DtoMapper.Follow_Store_DtoMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Product_Rating;
-import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Client;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Follow_Store;
-import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Notification;
-import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.NotificationEnum.NotificationType;
-import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.NotificationEnum.Notification_Class;
+import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.ClientRole;
+import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.TypeOfClientRole;
 import com.e_commerce.Project_E_Commerce_Spring.Repository.user_module.ClientRepository;
+import com.e_commerce.Project_E_Commerce_Spring.Repository.user_module.ClientRoleRepository;
 import com.e_commerce.Project_E_Commerce_Spring.service.ClientService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.time.LocalDate.now;
 
 
 @RestController
@@ -47,14 +48,38 @@ public class ClientController {
     private final ClientService clientService;
     private  final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
-    private final NotificationMapper notificationMapper;
+    private final Argon2PasswordEncoder passwordEncoder;
     private  final Follow_Store_DtoMapper followStoreDtoMapper;
     private final ProductRatingMapper productRatingMapper;
+    private final ClientAuthMapper clientAuthMapper;
+    private  final ClientRoleRepository clientRoleRepository;
 
+    @Transactional
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@Valid @RequestBody ClientAuthRequestRegister clientAuthRequestRegister){
 
+        Optional<ClientRole> role = clientRoleRepository.findByTypeOfClientRole(TypeOfClientRole.USER);
 
+        if (clientService.findByEmail(clientAuthRequestRegister.getEmailClient()) != null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This store already exist");
+        }
+
+        Client clientSaved = clientAuthMapper.registerRequestToEntity(clientAuthRequestRegister);
+
+        String password = passwordEncoder.encode(clientAuthRequestRegister.getPassword());
+        clientSaved.setPassword(password);
+
+        ClientRole clientRole = role.orElseThrow(() -> new NoSuchElementException("A role USER do not exist in db"));
+        clientSaved.setRoles(Set.of(clientRole));
+        clientSaved.setClientCreationDate(LocalDateTime.now());
+
+        clientRepository.save(clientSaved);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     @GetMapping("/search/address")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<List<ClientResponse>> findByAddress(@RequestBody Address address){
         List<Client> clients =  clientService.findByClientAddress(address);
         List<ClientResponse> result  = clients.stream()
@@ -65,6 +90,7 @@ public class ClientController {
     }
 
     @GetMapping("/{clientId}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<ClientResponse> findById( @PathVariable UUID clientId){
        Client client =  clientService.findById(clientId);
 
@@ -87,6 +113,7 @@ public class ClientController {
 
 
     @GetMapping("/number/{number}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<ClientResponse> getClientByNumber(@PathVariable String number) {
         Client client = clientService.findByNumber(number);
         ClientResponse response = clientMapper.toDtoResponse(client);
@@ -95,6 +122,7 @@ public class ClientController {
 
 
     @GetMapping("/email/{email}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<ClientResponse> getClientByEmail(@RequestParam String email) {
         Client client = clientService.findByEmail(email);
         ClientResponse response = clientMapper.toDtoResponse(client);
@@ -135,4 +163,12 @@ public class ClientController {
         List<Follow_Store_Dto> result = follows.stream().map(followStoreDtoMapper::toDto).collect(Collectors.toList());
         return  ResponseEntity.ok(result);
     }
+
+    /**
+    @PatchMapping
+
+
+    @DeleteMapping
+    **/
+
 }

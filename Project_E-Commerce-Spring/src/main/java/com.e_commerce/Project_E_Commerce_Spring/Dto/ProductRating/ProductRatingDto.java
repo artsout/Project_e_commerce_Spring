@@ -26,7 +26,9 @@ public class ProductRatingDto {
 
     private Long Idchild;
 
+    @Null
     private UUID clientId;
 
+    @Null
     private Long productId;
 }

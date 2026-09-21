@@ -1,15 +1,20 @@
 package com.e_commerce.Project_E_Commerce_Spring.Model.user_module;
 
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.ClientAuthRequest;
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Product_Rating;
+import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.ClientRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.management.relation.Role;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +32,7 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
 
     @NotBlank
     @Size(min = 5, max = 20)
@@ -46,7 +52,6 @@ public class Client {
     private LocalDateTime clientCreationDate;
 
     @NotBlank
-    @Size(min = 8, max = 15, message = "Please, insert a valid password")
     @Column(nullable = false)
     private String password;
 
@@ -66,6 +71,15 @@ public class Client {
     @Embedded
     private Address clientAddress;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name ="client_role_join",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<ClientRole> roles = new HashSet<>();
+
+
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Notification> notifications = new HashSet<>();
@@ -75,4 +89,9 @@ public class Client {
 
     @OneToMany(mappedBy = "client")
     private Set<Follow_Store> clientFollow = new HashSet<>();
+
+    public boolean isLoginCorrect(ClientAuthRequest clientAuthRequest, PasswordEncoder passwordEncoder){
+        return passwordEncoder.matches(clientAuthRequest.getPassword() , this.password);
+    }
+
 }
