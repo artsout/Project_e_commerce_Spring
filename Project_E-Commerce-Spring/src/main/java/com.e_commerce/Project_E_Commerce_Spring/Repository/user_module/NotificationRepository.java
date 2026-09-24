@@ -16,6 +16,7 @@ import java.util.UUID;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     List<Notification> findByNotificationNameContainingIgnoreCase(String notificationName);
+    Notification findByIdAndStoreId(Long notificationId,UUID storeId);
 
     List<Notification> findByNotificationClass(Notification_Class notification_class);
 

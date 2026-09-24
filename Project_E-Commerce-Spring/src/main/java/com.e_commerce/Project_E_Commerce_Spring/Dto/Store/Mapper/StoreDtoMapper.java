@@ -2,6 +2,7 @@ package com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Mapper;
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.StoreDto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.StoreUpdateDto;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.response.StoreDtoPublicResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
 import org.mapstruct.Mapper;
 
@@ -9,6 +10,7 @@ import org.mapstruct.Mapper;
 public interface StoreDtoMapper {
 
     StoreDto toDto(Store store);
-
+    StoreUpdateDto toUpdateDto(Store store);
+    StoreDtoPublicResponse toPublicDto(Store store);
 
 }

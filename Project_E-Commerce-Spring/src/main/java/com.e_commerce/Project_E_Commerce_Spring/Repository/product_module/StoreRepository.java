@@ -1,6 +1,7 @@
 package com.e_commerce.Project_E_Commerce_Spring.Repository.product_module;
 
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
+import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Role.StoreRole;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,7 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
 
     Store findByEmail(String email);
 
+    Store findByRoles(StoreRole storeRole);
 
     @Query(value = "SELECT s.* FROM Store s " +
             "INNER JOIN StoreAddress a ON s.address_id = a.id " +

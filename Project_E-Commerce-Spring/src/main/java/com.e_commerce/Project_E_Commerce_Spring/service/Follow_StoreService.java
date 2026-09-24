@@ -88,4 +88,16 @@ public class Follow_StoreService {
 
         return followStores;
     }
+
+    public List<Follow_Store> findByClientId(UUID clientId){
+        if(clientId==null){
+            throw  new IllegalArgumentException("Parameter cant be null");
+        }
+
+        List<Follow_Store> followStores =  followStoreRepository.findByClientId(clientId);
+        if (followStores.isEmpty()){
+            throw new NoSuchElementException("Client not found");
+        }
+        return followStores;
+    }
 }

@@ -2,6 +2,7 @@ package com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationMa
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationDto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationUpdateRequest;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationUserDtoResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Product;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Client;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-09-20T23:03:46-0300",
+    date = "2026-09-23T23:58:02-0300",
     comments = "version: 1.6.3, compiler: javac, environment: Java 25.0.2 (Oracle Corporation)"
 )
 @Component
@@ -37,6 +38,23 @@ public class NotificationMapperImpl implements NotificationMapper {
         notificationDto.notificationDescription( notification.getNotificationDescription() );
 
         return notificationDto.build();
+    }
+
+    @Override
+    public NotificationUserDtoResponse toUserDto(Notification notification) {
+        if ( notification == null ) {
+            return null;
+        }
+
+        NotificationUserDtoResponse notificationUserDtoResponse = new NotificationUserDtoResponse();
+
+        notificationUserDtoResponse.setNotificationName( notification.getNotificationName() );
+        notificationUserDtoResponse.setNotificationAlreadyRead( notification.getNotificationAlreadyRead() );
+        notificationUserDtoResponse.setNotificationDate( notification.getNotificationDate() );
+        notificationUserDtoResponse.setNotificationClass( notification.getNotificationClass() );
+        notificationUserDtoResponse.setNotificationDescription( notification.getNotificationDescription() );
+
+        return notificationUserDtoResponse;
     }
 
     @Override

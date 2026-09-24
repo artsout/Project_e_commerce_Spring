@@ -1,6 +1,7 @@
 package com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth;
 
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,5 +30,6 @@ public class ClientAuthRequestRegister {
     private String number;
 
     @NotNull
+    @Valid
     private Address clientAddress;
 }

@@ -40,7 +40,8 @@ public class Store {
     @Column(nullable = false ,unique = true)
     private String email;
 
-
+    @ColumnDefault("0")
+    @Column(nullable = false)
     private Integer followCount=0;
 
     @NotBlank
@@ -51,6 +52,7 @@ public class Store {
     @NotBlank
     @Column(nullable = false)
     private String storeName;
+
 
 
     @NotBlank

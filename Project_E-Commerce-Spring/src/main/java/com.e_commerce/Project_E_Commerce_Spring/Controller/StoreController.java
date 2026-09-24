@@ -4,12 +4,11 @@ import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Auth.StoreAuthRegister
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Mapper.StoreDtoMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.StoreDto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.StoreUpdateDto;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_DtoMapper.Follow_Store_DtoMapper;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.response.StoreDtoPublicResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Role.StoreRole;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Role.TypeOfStoreRoles;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
-import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.ClientRole;
 import com.e_commerce.Project_E_Commerce_Spring.Repository.product_module.StoreRepository;
 import com.e_commerce.Project_E_Commerce_Spring.Repository.product_module.StoreRoleRepository;
 import com.e_commerce.Project_E_Commerce_Spring.service.StoreService;
@@ -17,12 +16,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,7 @@ public class StoreController {
    public ResponseEntity<Void> register(@Valid @RequestBody StoreAuthRegisterRequest storeAuthRegisterRequest){
 
 
-        StoreRole role = storeRoleRepository.findByTypeOfStoreRoles(TypeOfStoreRoles.OWNER);
+      StoreRole role = storeRoleRepository.findByTypeOfStoreRoles(TypeOfStoreRoles.OWNER).orElseThrow(() -> new NoSuchElementException("Not found this role"));
 
       Store store =storeRepository.findByCnpj(storeAuthRegisterRequest.getCnpj());
       if(store != null ){
@@ -65,12 +64,28 @@ public class StoreController {
    }
 
    @PutMapping("/update/{storeId}")
-   public ResponseEntity<Void> updateStore(@PathVariable UUID storeId , @RequestBody StoreUpdateDto dto){
+   @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+   public ResponseEntity<StoreDto> updateStore(@PathVariable UUID storeId ,@Valid @RequestBody StoreUpdateDto dto){
         storeService.updateStore(storeId,dto);
-        return  ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        Store store = storeService.findById(storeId);
+       StoreDto storeDto = storeDtoMapper.toDto(store);
+        return  ResponseEntity.ok(storeDto);
    }
 
+    @PutMapping("/update/me")
+    public ResponseEntity<StoreDto> updateStore(Authentication authentication, @Valid @RequestBody StoreUpdateDto dto){
+      String storeId = authentication.getName();
+
+       storeService.updateStore(UUID.fromString(storeId),dto);
+
+        Store store = storeService.findById(UUID.fromString(storeId));
+
+        StoreDto storeDto = storeDtoMapper.toDto(store);
+        return  ResponseEntity.ok(storeDto);
+    }
+
     @GetMapping("/{storeId}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<StoreDto> findById(@PathVariable UUID storeId){
         Store store =  storeService.findById(storeId);
         StoreDto storeDto  = storeDtoMapper.toDto(store);
@@ -79,28 +94,73 @@ public class StoreController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<StoreDto> findByEmail(@PathVariable String email){
+    public ResponseEntity<StoreDtoPublicResponse> findByEmail(@PathVariable String email){
         Store store =  storeService.findByEmail(email);
-        StoreDto storeDto  = storeDtoMapper.toDto(store);
+        StoreDtoPublicResponse storeDtoPublicResponse  = storeDtoMapper.toPublicDto(store);
 
-        return ResponseEntity.ok(storeDto);
+        return ResponseEntity.ok(storeDtoPublicResponse);
     }
 
     @GetMapping("/cnpj/{cnpj}")
-    public ResponseEntity<StoreDto> findByCnpj(@PathVariable String cnpj){
+    public ResponseEntity<StoreDtoPublicResponse> findByCnpj(@PathVariable String cnpj){
         Store store =  storeService.findByCnpj(cnpj);
-        StoreDto storeDto  = storeDtoMapper.toDto(store);
+        StoreDtoPublicResponse storeDtoPublicResponse  = storeDtoMapper.toPublicDto(store);
 
-        return ResponseEntity.ok(storeDto);
+        return ResponseEntity.ok(storeDtoPublicResponse);
     }
 
     @GetMapping("/search/address")
-    public ResponseEntity<List<StoreDto>> findByAddress(@RequestBody Address address){
+    public ResponseEntity<List<StoreDtoPublicResponse>> findByAddress(@RequestBody Address address){
         List<Store> stores =  storeService.findByStoreAddress(address);
-        List<StoreDto> result  = stores.stream()
-                .map(storeDtoMapper::toDto)
+        List<StoreDtoPublicResponse> result  = stores.stream()
+                .map(storeDtoMapper::toPublicDto)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
+    }
+
+
+    @PatchMapping("/patch/{storeId}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<StoreDto> patch(@PathVariable UUID storeId , @Valid @RequestBody StoreUpdateDto storeUpdateDto){
+       storeService.updateStore(storeId,storeUpdateDto);
+
+       Store store= storeService.findById(storeId);
+
+       StoreDto storeDto = storeDtoMapper.toDto(store);
+
+      return  ResponseEntity.ok(storeDto);
+    }
+
+    @PatchMapping("/patch/me")
+    public ResponseEntity<StoreDto> patch(Authentication authentication, @Valid @RequestBody StoreUpdateDto storeUpdateDto){
+        String storeId = authentication.getName();
+        storeService.updateStore(UUID.fromString(storeId),storeUpdateDto);
+
+        Store store= storeService.findById(UUID.fromString(storeId));
+
+        StoreDto storeDto = storeDtoMapper.toDto(store);
+
+        return  ResponseEntity.ok(storeDto);
+    }
+
+
+    @DeleteMapping("/delete/{storeId}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable UUID storeId){
+       Store store = storeService.findById(storeId);
+        storeRepository.delete(store);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/delete/me")
+    public ResponseEntity<Void> delete(Authentication authentication){
+
+       String storeId = authentication.getName();
+
+        Store store = storeService.findById(UUID.fromString(storeId));
+        storeRepository.delete(store);
+        return ResponseEntity.noContent().build();
     }
 }

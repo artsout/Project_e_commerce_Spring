@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -87,7 +88,22 @@ public class NotificationService {
          if(!notifications.getNotificationAlreadyRead()){
              throw  new NotificationDeleteException("You cant Delete a notification that you dint read");
          }
+
+        notificationRepository.delete(notifications);
         return  notifications;
+    }
+    public Notification deleteNotification(UUID storeId,Long notificationId){
+        if( storeId==null || notificationId ==null ){
+            throw  new IllegalArgumentException("Parameter cant be null");
+        }
+
+        Notification notification = notificationRepository.findByIdAndStoreId(notificationId, storeId);
+
+        if(!notification.getNotificationAlreadyRead()){
+            throw  new NotificationDeleteException("You cant Delete a notification that you dint read");
+        }
+        notificationRepository.delete(notification);
+        return  notification;
     }
 
     public List<Notification> getNotificationsCustomized(UUID clientId, NotificationType notificationType , Boolean notificationAlreadyRead , Notification_Class notificationClass){
@@ -148,8 +164,6 @@ public class NotificationService {
             throw  new IllegalArgumentException("Parameter cant be null");
         }
 
-
-
         List<Notification> notifications= notificationRepository.findByStoreId(storeId);
         if (notifications.isEmpty()){
             throw  new NoSuchElementException("No notifications found");
@@ -158,5 +172,13 @@ public class NotificationService {
 
 
         return  notifications;
+    }
+
+    public  Notification findById(Long notificationId){
+        if(notificationId == null ){
+            throw  new IllegalArgumentException("Parameter cant be null");
+        }
+      Notification notification=  notificationRepository.findById(notificationId).orElseThrow(()-> new NoSuchElementException("Id not found"));
+    return  notification;
     }
 }

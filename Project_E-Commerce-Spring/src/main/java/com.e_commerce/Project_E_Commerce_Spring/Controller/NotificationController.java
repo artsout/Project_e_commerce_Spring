@@ -5,6 +5,8 @@ import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationDto
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationMapper.NotificationMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationUpdateRequest;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Notification.NotificationUserDtoResponse;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.StoreDto;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Notification;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.NotificationEnum.NotificationType;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.NotificationEnum.Notification_Class;
@@ -13,6 +15,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -31,51 +36,71 @@ public class NotificationController {
     private final NotificationMapper notificationMapper;
 
 
-    @PostMapping("{storeId}/send")
+    @PostMapping("/send")
+    @PreAuthorize("hasAnyRole('OWNER' , 'ADMIN')")
     public ResponseEntity<Void> createNotification(
-            @PathVariable UUID storeId ,
+            @AuthenticationPrincipal Jwt jwt,
             @Valid  @RequestBody NotificationDto notificationDto
     ){
-                                                        //So seguidores recebem notification
+      UUID storeId = UUID.fromString(jwt.getSubject());
       notificationService.sendNotificationToFollowers(storeId,notificationDto);
       return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     @DeleteMapping("/delete/{notificationId}")
-    public ResponseEntity<NotificationDto> deleteNotification(@PathVariable Long notificationId ){
-                                            //so vai dar para deletar se ela foi lida
-        Notification notification =  notificationService.deleteNotification(notificationId);
-        NotificationDto result = notificationMapper.toDto(notification);
-        return ResponseEntity.ok(result);
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<Void> deleteNotification(@PathVariable Long notificationId){
+
+        notificationService.deleteNotification(notificationId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    @DeleteMapping("/delete/{notificationId}/me")
+    @PreAuthorize("hasAuthority('SCOPE_OWNER')")
+    public ResponseEntity<Void> deleteNotification(@AuthenticationPrincipal Jwt jwt , @PathVariable Long notificationId){
+
+        UUID storeId = UUID.fromString(jwt.getSubject());
+         notificationService.deleteNotification(storeId,notificationId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/update/{notificationId}")
-    public ResponseEntity<Void> updateNotification(@PathVariable Long notificationId, @RequestBody NotificationUpdateRequest notificationUpdateRequest){
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<NotificationDto> updateNotification(@PathVariable Long notificationId, @RequestBody NotificationUpdateRequest notificationUpdateRequest){
        notificationService.updateNotification(notificationId,notificationUpdateRequest);
-        return  ResponseEntity.status(HttpStatus.ACCEPTED).build();
+
+        Notification notification = notificationService.findById(notificationId);
+        NotificationDto notificationDto = notificationMapper.toDto(notification);
+       return  ResponseEntity.ok(notificationDto);
     }
 
 
     @GetMapping("/{clientId}")
-    public ResponseEntity<List<NotificationDto>> findByClientId(@PathVariable UUID clientId){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<NotificationUserDtoResponse>> findByClientId(@PathVariable UUID clientId){
         List<Notification> notifications =  notificationService.findByClientId(clientId);
-        List<NotificationDto> result = notifications.stream()
-                .map(notificationMapper::toDto)
+        List<NotificationUserDtoResponse> result = notifications.stream()
+                .map(notificationMapper::toUserDto)
                 .toList();
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{storeId}/store")
-    public ResponseEntity<List<NotificationDto>> getAllNotificationsOfStore(@PathVariable UUID storeId){
+    @GetMapping("/{storeId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<NotificationUserDtoResponse>> getAllNotificationsOfStore(@PathVariable UUID storeId){
         List<Notification> notifications =  notificationService.findByStoreId(storeId);
-        List<NotificationDto> result = notifications.stream()
-                .map(notificationMapper::toDto)
+        List<NotificationUserDtoResponse> result = notifications.stream()
+                .map(notificationMapper::toUserDto)
                 .toList();
 
         return ResponseEntity.ok(result);
     }
     @GetMapping("/{clientId}/client")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<List<NotificationDto>> getAllNotificationsOfClient(@PathVariable UUID clientId,
                                                                             @RequestParam(required = false ) NotificationType notificationType, @RequestParam(required = false, defaultValue = "false") Boolean notificationAlreadyRead,@RequestParam(required = false) Notification_Class notificationClass){
         List<Notification> notifications = notificationService.getNotificationsCustomized(clientId, notificationType, notificationAlreadyRead , notificationClass);
@@ -88,22 +113,24 @@ public class NotificationController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<List<NotificationDto>> getNotificationByDate(LocalDateTime start , LocalDateTime end){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<NotificationUserDtoResponse>> getNotificationByDate(@RequestParam LocalDateTime start ,@RequestParam LocalDateTime end){
        List<Notification> notifications = notificationService.findByNotificationDateBetween(start,end);
-       List<NotificationDto> result = notifications
+       List<NotificationUserDtoResponse> result = notifications
                .stream()
-               .map(notificationMapper::toDto)
+               .map(notificationMapper::toUserDto)
                .collect(Collectors.toList());
 
        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<NotificationDto>> getNotificationByName(@PathVariable String name){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<NotificationUserDtoResponse>> getNotificationByName(@PathVariable String name){
         List<Notification> notifications = notificationService.findByNotificationNameContaining(name);
-        List<NotificationDto> result = notifications
+        List<NotificationUserDtoResponse> result = notifications
                 .stream()
-                .map(notificationMapper::toDto)
+                .map(notificationMapper::toUserDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }

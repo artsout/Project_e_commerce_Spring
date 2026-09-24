@@ -4,9 +4,10 @@ package com.e_commerce.Project_E_Commerce_Spring.Controller;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.ClientAuthRequestRegister;
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.mapper.ClientAuthMapper;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.responses.ClientAdminResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientMapper.ClientMapper;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientUpdatedRequest;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.responses.ClientUserResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.ProductRating.Mapper.ProductRatingMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.ProductRating.ProductRatingDto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_Dto;
@@ -24,9 +25,11 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -80,9 +83,9 @@ public class ClientController {
 
     @GetMapping("/search/address")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<List<ClientResponse>> findByAddress(@RequestBody Address address){
+    public ResponseEntity<List<ClientAdminResponse>> findByAddress(@RequestBody Address address){
         List<Client> clients =  clientService.findByClientAddress(address);
-        List<ClientResponse> result  = clients.stream()
+        List<ClientAdminResponse> result  = clients.stream()
                 .map(clientMapper::toDtoResponse)
                 .collect(Collectors.toList());
 
@@ -91,22 +94,38 @@ public class ClientController {
 
     @GetMapping("/{clientId}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<ClientResponse> findById( @PathVariable UUID clientId){
+    public ResponseEntity<ClientAdminResponse> findById(@PathVariable UUID clientId){
        Client client =  clientService.findById(clientId);
 
-        ClientResponse response = clientMapper.toDtoResponse(client);
+        ClientAdminResponse response = clientMapper.toDtoResponse(client);
 
         return ResponseEntity.ok(response);
     }
-
     @PutMapping("/update/{clientId}")
-    public ResponseEntity<ClientResponse> updateClientInformation(@PathVariable UUID clientId,
-                                                   @Valid @RequestBody ClientUpdatedRequest clientUpdatedRequest){
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<ClientUserResponse> updateClientInformation(@PathVariable UUID clientId,
+                                                                      @Valid @RequestBody ClientUpdatedRequest clientUpdatedRequest){
+
+
         Client client =  clientService.findById(clientId);
 
         clientService.update(client , clientUpdatedRequest);
 
-        ClientResponse response = clientMapper.toDtoResponse(client);
+        ClientUserResponse response = clientMapper.toDtoUserResponse(client);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/update/me")
+    public ResponseEntity<ClientUserResponse> updateClientInformation(Authentication authentication,
+                                                                       @Valid @RequestBody ClientUpdatedRequest clientUpdatedRequest){
+
+        String clientId = authentication.getName();
+        Client client =  clientService.findById(UUID.fromString(clientId));
+
+        clientService.update(client , clientUpdatedRequest);
+
+        ClientUserResponse response = clientMapper.toDtoUserResponse(client);
 
         return ResponseEntity.ok(response);
     }
@@ -114,27 +133,27 @@ public class ClientController {
 
     @GetMapping("/number/{number}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<ClientResponse> getClientByNumber(@PathVariable String number) {
+    public ResponseEntity<ClientAdminResponse> getClientByNumber(@PathVariable String number) {
         Client client = clientService.findByNumber(number);
-        ClientResponse response = clientMapper.toDtoResponse(client);
+        ClientAdminResponse response = clientMapper.toDtoResponse(client);
         return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/email/{email}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<ClientResponse> getClientByEmail(@RequestParam String email) {
+    public ResponseEntity<ClientAdminResponse> getClientByEmail(@PathVariable String email) {
         Client client = clientService.findByEmail(email);
-        ClientResponse response = clientMapper.toDtoResponse(client);
+        ClientAdminResponse response = clientMapper.toDtoResponse(client);
         return ResponseEntity.ok (response);
     }
 
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<ClientResponse>> getClientsByName(@RequestParam String name) {
+    public ResponseEntity<List<ClientUserResponse>> getClientsByName(@PathVariable String name) {
         List<Client> clients = clientService.findByNameContaining(name);
-        List<ClientResponse> response = clients.stream()
-                .map(clientMapper::toDtoResponse)
+        List<ClientUserResponse> response = clients.stream()
+                .map(clientMapper::toDtoUserResponse)
                 .toList();
         return ResponseEntity.ok(response);
     }
@@ -164,11 +183,61 @@ public class ClientController {
         return  ResponseEntity.ok(result);
     }
 
-    /**
-    @PatchMapping
 
+    @PatchMapping("/patch/{clientId}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<ClientUserResponse> update(@PathVariable UUID clientId,
+                                                      @Valid @RequestBody ClientUpdatedRequest clientUpdatedRequest
+                                                ){
+      Client client =  clientService.findById(clientId);
 
-    @DeleteMapping
-    **/
+      clientService.update(client,clientUpdatedRequest);
 
+      ClientUserResponse c = new ClientUserResponse();
+      c.setClientName(clientUpdatedRequest.getClientName());
+      c.setClientCreationDate(client.getClientCreationDate());
+      c.setFollowsCount(client.getFollowsCount());
+
+      return ResponseEntity.ok(c);
+    }
+
+    @PatchMapping("/patch/me")
+    public ResponseEntity<ClientUserResponse> update(Authentication authentication,
+                                                     @Valid @RequestBody ClientUpdatedRequest clientUpdatedRequest
+    ){
+        String clientUUID =  authentication.getName();
+
+        Client client = clientService.findById(UUID.fromString(clientUUID));
+        clientService.update(client,clientUpdatedRequest);
+
+        ClientUserResponse c = new ClientUserResponse();
+        c.setClientName(clientUpdatedRequest.getClientName());
+        c.setClientCreationDate(client.getClientCreationDate());
+        c.setFollowsCount(client.getFollowsCount());
+
+        return ResponseEntity.ok(c);
+    }
+
+    @DeleteMapping("delete/{clientId}")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable UUID clientId){
+
+     Client client = clientService.findById(clientId);
+
+     clientRepository.delete(client);
+
+     return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("delete/me")
+    public ResponseEntity<Void> delete(Authentication authentication){
+
+        String clientId = authentication.getName();
+
+        Client client = clientService.findById(UUID.fromString(clientId));
+
+        clientRepository.delete(client);
+
+        return ResponseEntity.noContent().build();
+    }
 }

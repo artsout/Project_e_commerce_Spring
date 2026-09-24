@@ -19,22 +19,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ClientUpdatedRequest {
 
-
-    @NotBlank
     private String clientName;
 
-    @Email
     private String emailClient;
 
-    @NotNull
-    private LocalDateTime clientCreationDate;
-
-    @NotBlank
     private String password;
 
-    @NotBlank
     private String number;
 
-    @NotNull
     private Address clientAddress;
 }
