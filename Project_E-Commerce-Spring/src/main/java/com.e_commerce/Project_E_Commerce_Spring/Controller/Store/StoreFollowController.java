@@ -1,4 +1,4 @@
-package com.e_commerce.Project_E_Commerce_Spring.Controller;
+package com.e_commerce.Project_E_Commerce_Spring.Controller.Store;
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientMapper.ClientMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_Dto;

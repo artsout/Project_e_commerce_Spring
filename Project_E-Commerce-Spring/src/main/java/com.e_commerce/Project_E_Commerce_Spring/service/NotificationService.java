@@ -11,6 +11,7 @@ import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.NotificationEn
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.NotificationEnum.Notification_Class;
 import com.e_commerce.Project_E_Commerce_Spring.Repository.user_module.NotificationRepository;
 import com.e_commerce.Project_E_Commerce_Spring.service.Exceptions.NotificationDeleteException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,15 +32,23 @@ public class NotificationService {
     private  final StoreService storeService;
     private final ProductService productService;
 
-    public void sendNotificationToFollowers(UUID storeId, NotificationDto Dto){
+
+    //aq precisaria de kafka e kubernates pq imagine ter q fazer 100000 notificaçoes para seguidores
+    @Transactional
+    public void sendNotificationToFollowers(UUID storeId, NotificationDto Dto,Long productId){
         if(storeId == null || Dto==null){
             throw  new IllegalArgumentException("Parameter cant be null");
         }
         Store store =storeService.findById(storeId);
-        Product product = Dto.getProductId() !=null ? productService.findById(Dto.getProductId()) : null;
+        Product product = (productId != null) ? productService.findById(productId) : null;
+        NotificationType notificationType;
+        if (product==null){
+           notificationType = NotificationType.STORE;
+        }else{
+          notificationType =  NotificationType.PRODUCT;
+        }
 
-
-       followStoreService.getFollowsByStoreId(storeId).stream().forEach(
+        List<Notification> notificationsToSave = followStoreService.getFollowsByStoreId(storeId).stream().map(
                follow_store ->{
                    Notification notification = new Notification();
                    notification.setNotificationName(Dto.getNotificationName());
@@ -47,13 +56,16 @@ public class NotificationService {
                    notification.setNotificationAlreadyRead(false);
                    notification.setNotificationClass(Dto.getNotificationClass());
                    notification.setNotificationDate(Dto.getNotificationDate());
-                   notification.setNotificationType(Dto.getType());
+                    notification.setNotificationType(notificationType);
                    notification.setClient(follow_store.getClient());
                    notification.setStore(store);
                    notification.setProduct(product);
-                   notificationRepository.save(notification);
+                    return  notification;
                }
-        );
+        ).toList();
+        if (!notificationsToSave.isEmpty()) {
+            notificationRepository.saveAll(notificationsToSave);
+        }
     }
     public void updateNotification(Long notificationId, NotificationUpdateRequest notificationUpdateRequest){
         if(notificationId == null || notificationUpdateRequest ==null){

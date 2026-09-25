@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 
 import java.time.LocalDateTime;
@@ -51,7 +52,7 @@ public class Order {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime orderDate;
 
-
+    @CreatedDate
     @Column(nullable = false)
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime orderArrivalDate;

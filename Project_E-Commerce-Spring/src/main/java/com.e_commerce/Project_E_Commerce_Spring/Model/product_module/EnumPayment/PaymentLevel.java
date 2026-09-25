@@ -3,5 +3,10 @@ package com.e_commerce.Project_E_Commerce_Spring.Model.product_module.EnumPaymen
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class PaymentLevel {
+public enum PaymentLevel {
+    PENDING,
+    PROCESSING,
+    APPROVED,
+    REJECTED,
+    REFUNDED;
 }

@@ -16,8 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class StoreDto {
 
-    @Null
-    private UUID id;
+
     @NotBlank
     private String email;
     @NotBlank

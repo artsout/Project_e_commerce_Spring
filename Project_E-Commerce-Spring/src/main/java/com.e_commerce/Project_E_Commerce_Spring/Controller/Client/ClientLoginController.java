@@ -1,15 +1,13 @@
-package com.e_commerce.Project_E_Commerce_Spring.Controller;
+package com.e_commerce.Project_E_Commerce_Spring.Controller.Client;
 
 
-import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Auth.StoreAuthRequest;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Auth.StoreAuthResponse;
-import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Store;
-import com.e_commerce.Project_E_Commerce_Spring.Repository.product_module.StoreRepository;
-import jakarta.validation.Valid;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.ClientAuthRequest;
+import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.ClientAuthResponse;
+import com.e_commerce.Project_E_Commerce_Spring.Repository.user_module.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -22,36 +20,36 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/store")
+@RequestMapping("/client")
 @RequiredArgsConstructor
-public class StoreLoginController {
+public class ClientLoginController {
 
     private final JwtEncoder jwtEncoder;
-    private final StoreRepository storeRepository;
-    private  final Argon2PasswordEncoder passwordEncoder;
+    private final ClientRepository clientRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<StoreAuthResponse> login(@Valid @RequestBody StoreAuthRequest storeAuthRequest){
-       Store store = storeRepository.findByEmail(storeAuthRequest.getEmail());
-        if (store == null || !store.isLoginCorrect(storeAuthRequest,passwordEncoder)){
+    public ResponseEntity<ClientAuthResponse> login(@RequestBody ClientAuthRequest clientAuthRequest){
+       var client = clientRepository.findByEmailClient(clientAuthRequest.getEmailClient());
+        if (client == null || !client.isLoginCorrect(clientAuthRequest,passwordEncoder)){
             throw  new BadCredentialsException("email or password is invalid");
         }
         var expiresIn = 3600L;
 
-        var scope = store.getRoles()
+        var scope = client.getRoles()
                 .stream()
-                .map(storeRole-> storeRole.getTypeOfStoreRoles().name())
+                .map(clientRole-> clientRole.getTypeOfClientRole().name())
                 .collect(Collectors.joining(" "));
 
         var claims = JwtClaimsSet.builder()
                 .issuer("mybackend")
-                .subject(store.getId().toString())
+                .subject(client.getId().toString())
                 .expiresAt(Instant.now().plusSeconds(expiresIn))
                 .claim("scope", scope)
                 .build();
 
         var jwtValues = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return ResponseEntity.ok(new StoreAuthResponse(jwtValues,expiresIn));
+        return  ResponseEntity.ok(new ClientAuthResponse(jwtValues,expiresIn));
     }
 }

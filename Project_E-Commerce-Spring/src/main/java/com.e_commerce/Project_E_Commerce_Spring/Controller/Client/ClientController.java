@@ -1,4 +1,4 @@
-package com.e_commerce.Project_E_Commerce_Spring.Controller;
+package com.e_commerce.Project_E_Commerce_Spring.Controller.Client;
 
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.Auth.ClientAuthRequestRegister;
@@ -10,12 +10,10 @@ import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.ClientUpdatedRequest;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Client.responses.ClientUserResponse;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.ProductRating.Mapper.ProductRatingMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.ProductRating.ProductRatingDto;
-import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_Dto;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.follow.Follow_Store_DtoMapper.Follow_Store_DtoMapper;
 import com.e_commerce.Project_E_Commerce_Spring.Model.aux_Adress_model.Address;
 import com.e_commerce.Project_E_Commerce_Spring.Model.product_module.Product_Rating;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Client;
-import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Follow_Store;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.ClientRole;
 import com.e_commerce.Project_E_Commerce_Spring.Model.user_module.Role.TypeOfClientRole;
 import com.e_commerce.Project_E_Commerce_Spring.Repository.user_module.ClientRepository;
@@ -25,7 +23,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

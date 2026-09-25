@@ -1,4 +1,4 @@
-package com.e_commerce.Project_E_Commerce_Spring.Controller;
+package com.e_commerce.Project_E_Commerce_Spring.Controller.Store;
 
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Auth.StoreAuthRegisterRequest;
 import com.e_commerce.Project_E_Commerce_Spring.Dto.Store.Mapper.StoreDtoMapper;

@@ -37,13 +37,14 @@ public class NotificationController {
 
 
     @PostMapping("/send")
-    @PreAuthorize("hasAnyAuthority('SCOPE_OWNER', 'SCOPE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_OWNER', 'SCOPE_STORE_ADMIN')")
     public ResponseEntity<Void> createNotification(
             @AuthenticationPrincipal Jwt jwt,
-            @Valid  @RequestBody NotificationDto notificationDto
+            @Valid  @RequestBody NotificationDto notificationDto,
+            @RequestParam(required = false) Long productId
     ){
       UUID storeId = UUID.fromString(jwt.getSubject());
-      notificationService.sendNotificationToFollowers(storeId,notificationDto);
+      notificationService.sendNotificationToFollowers(storeId,notificationDto,productId);
       return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

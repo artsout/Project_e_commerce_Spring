@@ -24,11 +24,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class NotificationDto {
 
-    @Null(message = "O campo clientId deve ser nulo. O sistema gerencia esse ID automaticamente.")
-    private Long id;
 
-    @NotNull
-    private NotificationType type;
+
     @NotBlank
     private String notificationName;
 
@@ -39,12 +36,6 @@ public class NotificationDto {
     private Notification_Class notificationClass;
     @NotBlank
     private String notificationDescription;
-
-    @Null(message = "O campo clientId deve ser nulo. O sistema gerencia esse ID automaticamente.")
-    private UUID clientId;
-    @Null(message = "O campo storeId deve ser nulo. Use o ID da URL.")
-    private UUID storeId;
-
 
     private Long productId;
 }
