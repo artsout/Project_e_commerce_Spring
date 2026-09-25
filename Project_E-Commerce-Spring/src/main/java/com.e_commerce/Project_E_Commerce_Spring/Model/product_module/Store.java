@@ -53,8 +53,6 @@ public class Store {
     @Column(nullable = false)
     private String storeName;
 
-
-
     @NotBlank
     @Column(nullable = false,unique = true)
     private String password;
@@ -71,7 +69,7 @@ public class Store {
     private Set<Product> products = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Follow_Store> storeFollowed = new HashSet<>();
 
     @OneToMany(mappedBy = "store" ,cascade = {CascadeType.MERGE , CascadeType.PERSIST})

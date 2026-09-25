@@ -37,7 +37,7 @@ public class NotificationController {
 
 
     @PostMapping("/send")
-    @PreAuthorize("hasAnyRole('OWNER' , 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_OWNER', 'SCOPE_ADMIN')")
     public ResponseEntity<Void> createNotification(
             @AuthenticationPrincipal Jwt jwt,
             @Valid  @RequestBody NotificationDto notificationDto
@@ -79,7 +79,7 @@ public class NotificationController {
     }
 
 
-    @GetMapping("/{clientId}")
+    @GetMapping("/client/{clientId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<NotificationUserDtoResponse>> findByClientId(@PathVariable UUID clientId){
         List<Notification> notifications =  notificationService.findByClientId(clientId);
@@ -89,7 +89,7 @@ public class NotificationController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{storeId}")
+    @GetMapping("/store/{storeId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<NotificationUserDtoResponse>> getAllNotificationsOfStore(@PathVariable UUID storeId){
         List<Notification> notifications =  notificationService.findByStoreId(storeId);
@@ -99,10 +99,25 @@ public class NotificationController {
 
         return ResponseEntity.ok(result);
     }
-    @GetMapping("/{clientId}/client")
+    @GetMapping("/client-notifications/{clientId}")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<List<NotificationDto>> getAllNotificationsOfClient(@PathVariable UUID clientId,
                                                                             @RequestParam(required = false ) NotificationType notificationType, @RequestParam(required = false, defaultValue = "false") Boolean notificationAlreadyRead,@RequestParam(required = false) Notification_Class notificationClass){
+        List<Notification> notifications = notificationService.getNotificationsCustomized(clientId, notificationType, notificationAlreadyRead , notificationClass);
+
+        List<NotificationDto> result = notifications.stream()
+                .map(notificationMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/client-notifications/me")
+    @PreAuthorize("hasAnyAuthority('SCOPE_USER' , 'SCOPE_CLIENT_ADMIN')")
+    public ResponseEntity<List<NotificationDto>> getAllNotificationsOfClient(@AuthenticationPrincipal Jwt jwt,
+                                                                             @RequestParam(required = false ) NotificationType notificationType, @RequestParam(required = false, defaultValue = "false") Boolean notificationAlreadyRead,@RequestParam(required = false) Notification_Class notificationClass){
+
+        UUID clientId = UUID.fromString(jwt.getSubject());
         List<Notification> notifications = notificationService.getNotificationsCustomized(clientId, notificationType, notificationAlreadyRead , notificationClass);
 
         List<NotificationDto> result = notifications.stream()

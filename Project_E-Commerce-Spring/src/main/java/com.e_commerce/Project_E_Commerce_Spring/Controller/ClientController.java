@@ -169,19 +169,6 @@ public class ClientController {
             return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{clientId}/follows")
-    public  ResponseEntity<List<Follow_Store_Dto>> getFollows(@PathVariable UUID clientId,
-                                                                @RequestParam(required = false) LocalDateTime inicio,
-                                                                    @RequestParam(required = false) LocalDateTime fim){
-
-        if (fim != null && inicio == null) {
-            inicio = LocalDateTime.now();
-        }
-
-        List<Follow_Store> follows = clientService.getFollowsByClientId(clientId,inicio,fim);
-        List<Follow_Store_Dto> result = follows.stream().map(followStoreDtoMapper::toDto).collect(Collectors.toList());
-        return  ResponseEntity.ok(result);
-    }
 
 
     @PatchMapping("/patch/{clientId}")
@@ -210,12 +197,9 @@ public class ClientController {
         Client client = clientService.findById(UUID.fromString(clientUUID));
         clientService.update(client,clientUpdatedRequest);
 
-        ClientUserResponse c = new ClientUserResponse();
-        c.setClientName(clientUpdatedRequest.getClientName());
-        c.setClientCreationDate(client.getClientCreationDate());
-        c.setFollowsCount(client.getFollowsCount());
+        ClientUserResponse clientUserResponse = clientMapper.toDtoUserResponse(client);
 
-        return ResponseEntity.ok(c);
+        return ResponseEntity.ok(clientUserResponse);
     }
 
     @DeleteMapping("delete/{clientId}")

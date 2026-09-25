@@ -51,10 +51,11 @@ public class StoreController {
 
       Store storeSaved = new Store();
       storeSaved.setEmail(storeAuthRegisterRequest.getEmail());
+      storeSaved.setStoreName(storeAuthRegisterRequest.getStoreName());
       storeSaved.setPassword(passwordEncoder.encode(storeAuthRegisterRequest.getPassword()));
       storeSaved.setStoreAddress(storeAuthRegisterRequest.getStoreAddress());
       storeSaved.setCnpj(storeAuthRegisterRequest.getCnpj());
-
+        storeSaved.setOrderItemCount(0);
 
       storeSaved.setRoles(Set.of(role));
 
@@ -133,7 +134,7 @@ public class StoreController {
     }
 
     @PatchMapping("/patch/me")
-    public ResponseEntity<StoreDto> patch(Authentication authentication, @Valid @RequestBody StoreUpdateDto storeUpdateDto){
+    public ResponseEntity<StoreDto> patch(Authentication authentication, @RequestBody StoreUpdateDto storeUpdateDto){
         String storeId = authentication.getName();
         storeService.updateStore(UUID.fromString(storeId),storeUpdateDto);
 

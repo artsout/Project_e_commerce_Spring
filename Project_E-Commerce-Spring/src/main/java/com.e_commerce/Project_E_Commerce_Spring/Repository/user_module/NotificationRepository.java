@@ -29,7 +29,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("SELECT n FROM Notification n WHERE n.client.id = :clientId " +
             "AND (:notificationType IS NULL OR n.notificationType = :notificationType) " +
             "AND (:notificationAlreadyRead IS NULL OR n.notificationAlreadyRead = :notificationAlreadyRead)"+
-            "AND ( :notificationClass IS NULL OR n.notificationClass = :notificationClass)")
+            "AND (CAST(:notificationClass AS string) IS NULL OR n.notificationClass = :notificationClass)")
     List<Notification> findAllNotificationsByClientAndType (@Param("clientId") UUID clientId, @Param("notificationType") NotificationType notificationType , @Param("notificationAlreadyRead") Boolean notificationAlreadyRead, @Param("notificationClass") Notification_Class notificationClass);
 
 }

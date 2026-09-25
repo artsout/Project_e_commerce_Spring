@@ -27,7 +27,7 @@ public class StoreFollowController {
     private final Follow_Store_DtoMapper followStoreDtoMapper;
 
     @PostMapping("/follow/{storeId}")
-    @PreAuthorize("hasAnyRole('CLIENT', 'USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_USER' , 'SCOPE_CLIENT_ADMIN')")
     public ResponseEntity<Follow_Store_Dto> followStore(@AuthenticationPrincipal Jwt jwt,
                                                         @PathVariable UUID storeId){
         UUID clientId = UUID.fromString(jwt.getSubject());
@@ -37,7 +37,7 @@ public class StoreFollowController {
         return ResponseEntity.ok(response);
     }
     @DeleteMapping("/unfollow/{storeId}")
-    @PreAuthorize("hasAnyRole('CLIENT', 'USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_USER' , 'SCOPE_CLIENT_ADMIN')")
     public ResponseEntity<Follow_Store_Dto> unFollowStore(@AuthenticationPrincipal Jwt jwt,
                                                           @PathVariable UUID storeId){
 
